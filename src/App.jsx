@@ -772,7 +772,7 @@ export default function App() {
   function upgradeStage() {
     if (!nextStage) {
       haptic("error");
-      showToast("Tu as déjà le meilleur environnement.");
+      showToast("Tu as déjà le meilleur pièce.");
       return;
     }
 
@@ -785,12 +785,12 @@ export default function App() {
     setGame((prev) => ({
       ...prev,
       stage: prev.stage + 1,
-      lastAction: `Nouvel environnement : ${nextStage.name}`,
+      lastAction: `Nouvel pièce : ${nextStage.name}`,
     }));
 
     spawnBTCParticles(18);
     haptic("success");
-    showToast(`Environnement amélioré : ${nextStage.name} 🚀`);
+    showToast(`Pièce amélioré : ${nextStage.name} 🚀`);
   }
 
   function prestigeReset() {
@@ -1102,7 +1102,7 @@ export default function App() {
 
             <section className="home-summary">
               <div>
-                <span>Environnement</span>
+                <span>Pièce</span>
                 <strong>
                   {stages[game.stage].icon} {stages[game.stage].name}
                 </strong>
@@ -1155,7 +1155,7 @@ export default function App() {
               <div className="stage-info">
                 <span>{stages[game.stage].icon}</span>
                 <div>
-                  <p className="muted">Environnement</p>
+                  <p className="muted">Pièce</p>
                   <h3>{stages[game.stage].name}</h3>
                   <small>{stages[game.stage].desc}</small>
                 </div>
