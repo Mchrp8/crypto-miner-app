@@ -842,7 +842,7 @@ export default function App() {
       <main className="app loading-screen">
         <div className="loading-orb">₿</div>
         <h1>Crypto Miner</h1>
-        <p>Connexion au réseau de minage...</p>
+        <p>Décryptage de l'app...</p>
         <div className="loader" />
       </main>
     );
