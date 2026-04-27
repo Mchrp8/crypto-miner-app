@@ -18,6 +18,7 @@ const initialGame = {
   lastAction: "Bienvenue dans ton empire de minage.",
   upgrades: {
     gpu: 0,
+    gpuTier: 1,
     cooling: 0,
     electricity: 0,
     automation: 0,
@@ -188,13 +189,15 @@ function getUpgradeCost(key, level) {
 
 function calculateStats(game, btcPrice) {
   const gpuLevel = game.upgrades.gpu;
+  const gpuTier = game.upgrades.gpuTier || 1;
   const coolingLevel = game.upgrades.cooling;
   const electricityLevel = game.upgrades.electricity;
   const automationLevel = game.upgrades.automation;
   const securityLevel = game.upgrades.security;
   const tradingLevel = game.upgrades.trading;
 
-  const baseMining = 0.00004 + gpuLevel * 0.00004;
+  const baseMining =
+  (0.00004 + gpuLevel * 0.00004) * Math.pow(gpuTier, 1.7);
   const coolingBonus = 1 + coolingLevel * upgradesInfo.cooling.multiplier;
   const electricityBonus = 1 + electricityLevel * upgradesInfo.electricity.multiplier;
   const automationBonus = 1 + automationLevel * upgradesInfo.automation.multiplier;
@@ -700,9 +703,34 @@ export default function App() {
     return () => clearInterval(eventInterval);
   }, []);
 
+  const MAX_LEVEL = 10;
+
   function buyUpgrade(key) {
-    const level = game.upgrades[key];
-    const cost = getUpgradeCost(key, level);
+  const level = game.upgrades[key];
+  const cost = getUpgradeCost(key, level);
+  const MAX_LEVEL = 10;
+
+  if (level >= MAX_LEVEL) {
+    if (key === "gpu") {
+      setGame((prev) => ({
+        ...prev,
+        upgrades: {
+          ...prev.upgrades,
+          gpu: 0,
+          gpuTier: (prev.upgrades.gpuTier || 1) + 1,
+        },
+        lastAction: `🚀 GPU Tier ${(prev.upgrades.gpuTier || 1) + 1} débloqué !`,
+      }));
+
+      spawnBTCParticles(25);
+      haptic("success");
+      showToast(`🚀 GPU Tier ${(game.upgrades.gpuTier || 1) + 1} débloqué !`);
+      return;
+    }
+
+    showToast("Upgrade maxé.");
+    return;
+  }
 
     if (stats.netWorth < cost) {
       haptic("error");
@@ -1190,7 +1218,9 @@ export default function App() {
                     <h3>{info.title}</h3>
                     <p>{info.desc}</p>
                     <span>
-                      Niveau {level} • {info.stat}
+                      {key === "gpu"
+  ? `Tier ${game.upgrades.gpuTier || 1} • Niveau ${level}/10`
+  : `Niveau ${level}/10 • ${info.stat}`}
                     </span>
                   </div>
                   <strong>{formatMoney(cost)}</strong>
